@@ -4,6 +4,7 @@
     "antfu.unocss"
   ],
   "unwantedRecommendations": [
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "DanielX.civet"
   ]
 }
