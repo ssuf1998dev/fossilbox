@@ -1,33 +1,65 @@
+import { createRequestHandler } from "@remix-run/express";
 import { loadConfig } from "c12";
 import consola from "consola";
+import express from "express";
 import process from "node:process";
-import readline from "node:readline";
+import * as dist from "virtual:dist";
 
-import app from "./app";
+import database from "./db";
+import routes from "./routes";
 
-(async () => {
-  const config = await loadConfig({ name: "server" });
-  const { server, viteDevServer } = await app(config.config);
+async function app(config: FossilboxServer.UserConfig) {
+  const viteDevServer = process.env.NODE_ENV === "production"
+    ? null
+    : await import("vite").then(async vite => vite.createServer({
+      server: { middlewareMode: true },
+    }));
 
-  readline.emitKeypressEvents(process.stdin);
+  const app = express();
+  app.use(viteDevServer
+    ? viteDevServer.middlewares
+    : express.static(dist.client),
+  );
 
-  process.stdin.on("keypress", (_, key?: {
-    sequence: string;
-    name: string;
-    ctrl: boolean;
-    meta: boolean;
-    shift: boolean;
-  }) => {
-    if ([
-      key?.ctrl && key.name === "c",
-      key?.name === "q",
-    ].some(Boolean)) {
-      consola.log("goodbye~");
-      server.close();
-      viteDevServer?.close();
-      process.exit(0);
+  const build: any = viteDevServer
+    ? () =>
+        viteDevServer.ssrLoadModule(
+          "virtual:remix/server-build",
+        )
+    : await import(dist.server,);
+
+  app.set("config", config);
+  routes(app);
+  app.all("*", createRequestHandler({ build }));
+  await database(app, config);
+
+  const host = config.host || "127.0.0.1";
+  const port = Number(config.port) || 6330;
+
+  const server = app.listen(port, host, () => {
+    if (!import.meta.hot?.data?.reloaded) {
+      consola.success(`app listening on http://${host}:${port}.`);
     }
   });
 
-  process.stdin.setRawMode(true);
+  if (import.meta.hot) {
+    const dispose = async () => {
+      server.close();
+      await viteDevServer?.close();
+      import.meta.hot!.data.reloaded = true;
+      consola.info("hmr update");
+    };
+
+    import.meta.hot.on("vite:beforeFullReload", dispose);
+    import.meta.hot.dispose(dispose);
+  }
+
+  return { server, viteDevServer };
+}
+
+(async () => {
+  const config = await loadConfig<FossilboxServer.UserConfig>({
+    name: process.env.NODE_ENV === "production" ? "server" : "server.dev",
+  });
+  await app(config.config);
 })();

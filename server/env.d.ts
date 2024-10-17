@@ -1,6 +1,18 @@
 /// <reference types="vite/client" />
 
-declare module "virtual:dist" {
-  export const client: string;
-  export const server: string;
+import type db from "./db";
+
+declare global {
+  namespace FossilboxServer {
+    type UserConfig = {
+      host?: string;
+      port?: string | number;
+    } & {
+      db: "sqlite";
+      sqlite: {
+        file: string;
+      };
+    };
+    type DatabaseInstance = Exclude<Awaited<ReturnType<typeof db>>, void>;
+  }
 }

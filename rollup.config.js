@@ -10,8 +10,17 @@ import shims from "./plugins/shims.js";
 
 const pkg = JSON.parse(fs.readFileSync("package.json").toString());
 
+/** @type {import('rollup').RollupOptions["plugins"]} */
+const plugins = [
+  nodeResolve({ preferBuiltins: true }),
+  json(),
+  typescript({ tsconfig: "tsconfig.server.json" }),
+  commonjs(),
+  shims(),
+];
+
 /** @type {import('rollup').RollupOptions} */
-const config = {
+const server = {
   input: "server/index.ts",
   output: {
     dir: "dist",
@@ -22,13 +31,7 @@ const config = {
     "vite",
   ],
   plugins: [
-    nodeResolve({
-      preferBuiltins: true,
-    }),
-    json(),
-    typescript({ tsconfig: "tsconfig.server.json" }),
-    commonjs(),
-    shims(),
+    ...plugins,
     replace({
       ...Object.entries({
         "process.env.NODE_ENV": "production",
@@ -43,4 +46,14 @@ const config = {
   ],
 };
 
-export default config;
+/** @type {import('rollup').RollupOptions} */
+const utils = {
+  input: "utils/config-form-env.ts",
+  output: {
+    dir: "dist/utils",
+    format: "esm",
+  },
+  plugins: [...plugins],
+};
+
+export default [server, utils];

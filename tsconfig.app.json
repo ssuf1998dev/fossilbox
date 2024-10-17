@@ -7,6 +7,10 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@app/*": ["./app/*"],
+      "@server/*": ["./server/*"]
+    },
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
@@ -15,5 +19,5 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["app"]
+  "include": ["app/**/*", "utils"]
 }
