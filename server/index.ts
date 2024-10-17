@@ -15,6 +15,10 @@ async function app(config: FossilboxServer.UserConfig) {
       server: { middlewareMode: true },
     }));
 
+  import.meta.hot && process.once("uncaughtException", () => {
+    viteDevServer?.close();
+  });
+
   const app = express();
   app.use(viteDevServer
     ? viteDevServer.middlewares
@@ -47,7 +51,7 @@ async function app(config: FossilboxServer.UserConfig) {
       server.close();
       await viteDevServer?.close();
       import.meta.hot!.data.reloaded = true;
-      consola.info("hmr update");
+      consola.info("hmr update.");
     };
 
     import.meta.hot.on("vite:beforeFullReload", dispose);
