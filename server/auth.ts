@@ -1,24 +1,45 @@
+// import crypto from "crypto-js";
+// import { eq } from "drizzle-orm";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 
+import type sqliteUsersTable from "./db/schema/sqlite/users";
+
 import { sessionStorage } from "./session";
 
-interface User {
-  email: string;
-};
-
-export const authenticator = new Authenticator<User>(sessionStorage, { sessionErrorKey: "sessionError" });
+export const authenticator = new Authenticator<typeof sqliteUsersTable.$inferSelect | void>(
+  sessionStorage,
+  { sessionErrorKey: "sessionError" },
+);
 
 authenticator.use(
-  new FormStrategy(async ({ form }) => {
-    const email = form.get("email");
-    const password = form.get("password");
-    if (password !== "a") {
-      throw new Error("wrong password");
-    }
-    const user = { email: email?.toString() ?? "" };
-    // const user = await login(email, password);
-    return user;
+  new FormStrategy(async () => {
+    // const email = form.get("email");
+    // const password = form.get("password");
+
+    // const { db, config } = context!;
+
+    // if (config.db === "sqlite") {
+    //   const user = (await db!.select().from(sqliteUsersTable).where(
+    //     eq(sqliteUsersTable.email, email!.toString()),
+    //   ))[0];
+    //   const hash = crypto.PBKDF2("Secret Passphrase", user.salt, {
+    //     keySize: 128 / 32,
+    //   });
+    // }
+
+    // const db = await database();
+
+    // if (db.type === "sqlite") {
+    //   const user = (await db.select().from(sqliteUsersTable).where(
+    //     eq(sqliteUsersTable.email, email!.toString()),
+    //   ))[0];
+    //   const hash = crypto.PBKDF2("Secret Passphrase", user.salt, {
+    //     keySize: 128 / 32,
+    //   });
+
+    //   return user;
+    // }
   }),
   "user",
 );

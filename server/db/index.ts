@@ -1,13 +1,11 @@
-import type { Express } from "express";
-
 import { DatabaseNotSupported } from "@server/errors";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle as libsqlDrizzle } from "drizzle-orm/libsql";
 import fs from "node:fs";
 import path from "node:path";
 
 import * as cli from "./cli";
 
-export default async function db(app: Express, config: FossilboxServer.UserConfig) {
+export default async function database(config: FossilboxServer.UserConfig) {
   if (config.db === "sqlite") {
     if (!fs.existsSync(config.sqlite.file)) {
       fs.mkdirSync(path.dirname(config.sqlite.file), { recursive: true });
@@ -18,9 +16,7 @@ export default async function db(app: Express, config: FossilboxServer.UserConfi
       });
     }
 
-    const db = drizzle(`file:${config.sqlite.file}`);
-    app.set("db", db);
-    return db;
+    return libsqlDrizzle(`file:${config.sqlite.file}`);
   }
 
   throw new DatabaseNotSupported(config.db);

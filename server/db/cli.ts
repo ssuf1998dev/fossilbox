@@ -1,7 +1,7 @@
 import { $, type Options as ExecaOptions } from "execa";
 
 export async function push(options: {
-  dialect: "sqlite" | "postgresql" ;
+  dialect: "sqlite";
   schema: string;
 } & Partial<{
   casing: "camelCase" | "snake_case";

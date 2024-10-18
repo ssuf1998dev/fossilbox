@@ -33,9 +33,10 @@ async function app(config: FossilboxServer.UserConfig) {
     : await import(dist.server,);
 
   app.set("config", config);
+  const db = await database(config);
+  app.set("db", db);
   routes(app);
-  app.all("*", createRequestHandler({ build }));
-  await database(app, config);
+  app.all("*", createRequestHandler({ build, getLoadContext: () => ({ db, config }) }));
 
   const host = config.host || "127.0.0.1";
   const port = Number(config.port) || 6330;

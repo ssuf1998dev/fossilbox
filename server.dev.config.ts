@@ -1,4 +1,5 @@
-import "./server/env.d";
+/// <reference path="./server/shims.d.ts" />
+
 import configFormEnv from "./utils/config-form-env";
 
 export default <FossilboxServer.UserConfig>{
