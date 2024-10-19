@@ -1,11 +1,13 @@
 import { vitePlugin as remix } from "@remix-run/dev";
 import replace from "@rollup/plugin-replace";
+import unocss from "unocss/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => ({
   plugins: [
     tsconfigPaths({ projects: ["tsconfig.app.json", "tsconfig.server.json"] }),
+    unocss(),
     remix({ appDirectory: "src/app", buildDirectory: "dist" }),
     replace({
       ...Object.entries({

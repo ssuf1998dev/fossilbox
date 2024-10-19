@@ -4,6 +4,7 @@ import {
   Outlet,
   Scripts,
 } from "@remix-run/react";
+import "virtual:uno.css";
 
 export default function App() {
   return (
