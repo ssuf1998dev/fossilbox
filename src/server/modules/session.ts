@@ -1,4 +1,5 @@
 import { createCookieSessionStorage } from "@remix-run/node";
+import { nanoid } from "nanoid";
 import process from "node:process";
 
 export const sessionStorage = createCookieSessionStorage({
@@ -7,7 +8,7 @@ export const sessionStorage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     httpOnly: true,
-    secrets: ["s3cr3t"],
+    secrets: [nanoid()],
     secure: process.env.NODE_ENV === "production",
   },
 });

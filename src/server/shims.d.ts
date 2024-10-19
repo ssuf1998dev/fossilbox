@@ -8,13 +8,15 @@ declare global {
       host?: string;
       port?: string | number;
       sessionSecret?: string;
-      passwordSecret?: string;
     } & {
       db: "sqlite";
       sqlite: {
         file: string;
       };
+    } & {
+      $development?: Omit<UserConfig, "$development">;
     };
+
     type DatabaseInstance = ReturnType<typeof libsqlDrizzle> & { type?: "sqlite" };
   }
 }

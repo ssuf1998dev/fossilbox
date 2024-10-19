@@ -7,8 +7,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "paths": {
-      "@app/*": ["./app/*"],
-      "@server/*": ["./server/*"]
+      "@server/*": ["./src/server/*"]
     },
     "strict": true,
     "noFallthroughCasesInSwitch": true,
@@ -18,5 +17,5 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["server/**/*", "utils"]
+  "include": ["src/server/**/*"]
 }

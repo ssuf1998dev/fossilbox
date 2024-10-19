@@ -47,6 +47,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
       puppeteer-core:
         specifier: ^23.5.3
         version: 23.5.3
@@ -126,6 +129,9 @@ importers:
       lint-staged:
         specifier: ^15.2.10
         version: 15.2.10
+      local-pkg:
+        specifier: ^0.5.0
+        version: 0.5.0
       magic-string:
         specifier: ^0.30.12
         version: 0.30.12
@@ -3841,6 +3847,11 @@ packages:
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   natural-compare-lite@1.4.0:
@@ -9319,6 +9330,8 @@ snapshots:
   mute-stream@0.0.8: {}
 
   nanoid@3.3.7: {}
+
+  nanoid@5.0.7: {}
 
   natural-compare-lite@1.4.0: {}
 
