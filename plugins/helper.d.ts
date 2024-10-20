@@ -1,5 +1,5 @@
 import type { Plugin } from "rollup";
 
-const plugin: Plugin;
+declare const helper: () => Plugin;
 
-export default () => plugin;
+export { helper as default };

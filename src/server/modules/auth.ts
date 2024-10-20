@@ -7,6 +7,7 @@ import { FormStrategy } from "remix-auth-form";
 import sqliteUsersTable from "../db/schema/sqlite/users";
 import { sessionStorage } from "./session";
 
+/** @todo migrate to app */
 export const authenticator = new Authenticator<typeof sqliteUsersTable.$inferSelect>(
   sessionStorage,
 );

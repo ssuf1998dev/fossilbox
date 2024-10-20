@@ -1,23 +1,46 @@
+import type { LoaderFunctionArgs } from "@remix-run/node";
+
+import { Theme } from "@radix-ui/themes";
+import { json } from "@remix-run/node";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
+  useLoaderData,
 } from "@remix-run/react";
-import "virtual:uno.css";
+import { authenticator } from "@server/modules/auth";
+import { useChangeLanguage } from "remix-i18next/react";
+
+import serverI18n from "./locales/server";
 
 export default function App() {
+  const { locale } = useLoaderData<typeof loader>();
+  useChangeLanguage(locale);
+
   return (
-    <html>
+    <html lang={locale}>
       <head>
         <Meta />
         <Links />
       </head>
       <body>
-        <Outlet />
-
+        <Theme>
+          <Outlet />
+        </Theme>
         <Scripts />
       </body>
     </html>
   );
 }
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const isPublic = ["/login", "/signup"].includes(new URL(request.url).pathname);
+  await authenticator.isAuthenticated(request, {
+    successRedirect: "/home",
+    failureRedirect: isPublic ? undefined as never : "/login",
+  });
+
+  const locale = await serverI18n.getLocale(request);
+  return json({ locale });
+};

@@ -1,21 +1,22 @@
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "@remix-run/node";
 
+import { Button, Card, TextField } from "@radix-ui/themes";
 import { Form } from "@remix-run/react";
 import { authenticator } from "@server/modules/auth";
+import { useTranslation } from "react-i18next";
 import { AuthorizationError } from "remix-auth";
 
 export default function Login() {
+  const { t } = useTranslation();
+
   return (
-    <Form method="post">
-      <input type="email" name="email" required />
-      <input
-        type="password"
-        name="password"
-        autoComplete="current-password"
-        required
-      />
-      <button>Sign In</button>
-    </Form>
+    <Card>
+      <Form>
+        <TextField.Root type="email" name="email" required></TextField.Root>
+        <TextField.Root type="password" name="password" autoComplete="current-password" required></TextField.Root>
+        <Button>{t("capital_case", { value: t("sign_in") })}</Button>
+      </Form>
+    </Card>
   );
 }
 
@@ -36,11 +37,4 @@ export async function action({ request, context }: ActionFunctionArgs) {
     }
     return new Response(null, { status: 500 });
   }
-};
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  await authenticator.isAuthenticated(request, {
-    successRedirect: "/home",
-  });
-  return null;
 };
