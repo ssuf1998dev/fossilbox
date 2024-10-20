@@ -1,15 +1,43 @@
+import type { RequestHandler } from "express";
+
 import { createRequestHandler } from "@remix-run/express";
 import { watchConfig } from "c12";
-import consola from "consola";
 import express from "express";
 import { cloneDeep } from "lodash-es";
 import process from "node:process";
+import pc from "picocolors";
 import * as dist from "virtual:dist";
 
 import database from "./db";
+import createLogger from "./modules/logger";
 import routes from "./routes";
 
+function createHTTPLogger(level?: string) {
+  const logger = createLogger({ label: "server", level });
+  const NS_PER_SEC = 1e9;
+  const NS_TO_MS = 1e6;
+  return <RequestHandler>((req, resp, next) => {
+    const start = process.hrtime();
+
+    resp.on("finish", () => {
+      const diff = process.hrtime(start);
+      const duration = ~~((diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS);
+
+      logger.http([
+        req.method.toUpperCase(),
+        req.url,
+        resp.statusCode,
+        pc.dim(`${duration}ms`),
+      ].filter(Boolean).join(" "));
+    });
+
+    next();
+  });
+}
+
 async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
+  const logger = createLogger({ label: "app", level: config.logLevel });
+
   const viteDevServer = process.env.NODE_ENV === "production"
     ? null
     : await import("vite").then(async vite => vite.createServer({
@@ -33,15 +61,15 @@ async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
         )
     : await import(dist.server);
 
+  app.set("x-powered-by", false);
   app.set("config", config);
   const db = await database(config);
   app.set("db", db);
   routes(app);
+  app.use(createHTTPLogger(config.logLevel));
   app.all("*", createRequestHandler({
     build,
-    getLoadContext() {
-      return { db, config };
-    },
+    getLoadContext: () => ({ db, config }),
   }));
 
   const host = config.host!;
@@ -49,7 +77,7 @@ async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
 
   const server = app.listen(port, host, () => {
     if (!import.meta.hot?.data?.reloaded && !reloaded) {
-      consola.success(`app listening on \`http://${host}:${port}\`.`);
+      logger.info(`app listening on \`http://${host}:${port}\`.`);
     }
   });
 
@@ -58,14 +86,14 @@ async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
       server.close();
       await viteDevServer?.close();
       import.meta.hot!.data.reloaded = true;
-      consola.info("hmr update.");
+      logger.info("hmr update.");
     };
 
     import.meta.hot.on("vite:beforeFullReload", dispose);
     import.meta.hot.dispose(dispose);
   }
 
-  return { server, viteDevServer };
+  return { server, viteDevServer, logger };
 }
 
 function deepFreeze<T extends object>(object: T) {
@@ -89,8 +117,8 @@ function deepFreeze<T extends object>(object: T) {
       return getDiff().length === 0;
     },
     async onUpdate({ newConfig }) {
-      consola.info("config update.");
       if (initialized) {
+        initialized.logger.info("reload for config update.");
         initialized.server.close();
         await initialized.viteDevServer?.close();
         initialized = await app(deepFreeze(cloneDeep(newConfig.config)), true);

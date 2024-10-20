@@ -5,6 +5,7 @@ import type { drizzle as libsqlDrizzle } from "drizzle-orm/libsql";
 declare global {
   namespace FossilboxServer {
     type UserConfig = {
+      logLevel?: "silly" | "debug" | "verbose" | "http" | "info" | "warn" | "error";
       host?: string;
       port?: string | number;
       sessionSecret?: string;
