@@ -1,3 +1,4 @@
+/* eslint-disable vars-on-top, no-var */
 /// <reference types="vite/client" />
 
 import type { drizzle as libsqlDrizzle } from "drizzle-orm/libsql";
@@ -20,6 +21,9 @@ declare global {
 
     type DatabaseInstance = ReturnType<typeof libsqlDrizzle> & { type?: "sqlite" };
   }
+  var __NAME__: string;
+  var __VERSION__: string;
+  var __LOGO__: string;
 }
 
 export * from "@remix-run/server-runtime";

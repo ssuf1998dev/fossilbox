@@ -8,14 +8,17 @@ import * as dist from "virtual:dist";
 import database from "./db";
 import { createAppLogger, createHTTPLogger, createViteDevServerLogger } from "./modules/logger";
 
-async function app(config: FossilboxServer.UserConfig) {
+async function app(config: FossilboxServer.UserConfig, configFile?: string) {
   const logger = createAppLogger(config.logLevel);
 
   const viteDevServer = process.env.NODE_ENV === "production"
     ? null
     : await import("vite").then(async vite => vite.createServer({
       customLogger: createViteDevServerLogger(config.logLevel),
-      server: { middlewareMode: true },
+      server: {
+        middlewareMode: true,
+        warmup: { clientFiles: ["app/routes/**/*.{ts,tsx}"] },
+      },
     }));
 
   import.meta.hot && process.once("uncaughtException", () => {
@@ -44,7 +47,11 @@ async function app(config: FossilboxServer.UserConfig) {
   const port = Number.isNaN(Number(config.port)) ? 6330 : Number(config.port);
 
   const server = app.listen(port, host, () => {
-    logger.info(`app listening on \`http://${host}:${port}\`.`);
+    // eslint-disable-next-line no-console
+    __LOGO__ && console.log(__LOGO__);
+
+    configFile && logger.info(`found config: \`${configFile}\`.`);
+    logger.info(`listening on \`http://${host}:${port}\`.`);
   });
 
   return { server, viteDevServer, logger };
@@ -63,7 +70,7 @@ function deepFreeze<T extends object>(object: T) {
 
 (async () => {
   const config = await loadConfig<FossilboxServer.UserConfig>({
-    name: "fossilbox",
+    name: __NAME__,
     rcFile: false,
     globalRc: false,
     defaults: {
@@ -75,5 +82,5 @@ function deepFreeze<T extends object>(object: T) {
       },
     },
   });
-  await app(deepFreeze(cloneDeep(config.config)));
+  await app(deepFreeze(cloneDeep(config.config)), config.configFile);
 })();

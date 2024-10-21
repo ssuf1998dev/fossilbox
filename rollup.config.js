@@ -3,6 +3,7 @@ import json from "@rollup/plugin-json";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import typescript from "@rollup/plugin-typescript";
+import figlet from "figlet";
 import { getPackageInfoSync } from "local-pkg";
 import fs from "node:fs";
 import path from "node:path";
@@ -53,6 +54,9 @@ const server = {
       ...Object.entries({
         "process.env.NODE_ENV": "production",
         "import.meta.hot": undefined,
+        "__NAME__": pkg.name,
+        "__VERSION__": pkg.version,
+        "__LOGO__": figlet.textSync(pkg.name, { font: "Small" }),
       }).reduce((map, [key, value]) => {
         map[key] = JSON.stringify(value);
         return map;
