@@ -1,45 +1,20 @@
-import type { RequestHandler } from "express";
-
 import { createRequestHandler } from "@remix-run/express";
 import { loadConfig } from "c12";
 import express from "express";
 import { cloneDeep } from "lodash-es";
 import process from "node:process";
-import pc from "picocolors";
 import * as dist from "virtual:dist";
 
 import database from "./db";
-import createLogger from "./modules/logger";
-
-function createHTTPLogger(level?: string) {
-  const logger = createLogger({ label: "server", level });
-  const NS_PER_SEC = 1e9;
-  const NS_TO_MS = 1e6;
-  return <RequestHandler>((req, resp, next) => {
-    const start = process.hrtime();
-
-    resp.on("finish", () => {
-      const diff = process.hrtime(start);
-      const duration = ~~((diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS);
-
-      logger.http([
-        req.method.toUpperCase(),
-        req.url,
-        resp.statusCode,
-        pc.dim(`${duration}ms`),
-      ].filter(Boolean).join(" "));
-    });
-
-    next();
-  });
-}
+import { createAppLogger, createHTTPLogger, createViteDevServerLogger } from "./modules/logger";
 
 async function app(config: FossilboxServer.UserConfig) {
-  const logger = createLogger({ label: "app", level: config.logLevel });
+  const logger = createAppLogger(config.logLevel);
 
   const viteDevServer = process.env.NODE_ENV === "production"
     ? null
     : await import("vite").then(async vite => vite.createServer({
+      customLogger: createViteDevServerLogger(config.logLevel),
       server: { middlewareMode: true },
     }));
 
