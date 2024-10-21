@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 
 import { createRequestHandler } from "@remix-run/express";
-import { watchConfig } from "c12";
+import { loadConfig } from "c12";
 import express from "express";
 import { cloneDeep } from "lodash-es";
 import process from "node:process";
@@ -10,7 +10,6 @@ import * as dist from "virtual:dist";
 
 import database from "./db";
 import createLogger from "./modules/logger";
-import routes from "./routes";
 
 function createHTTPLogger(level?: string) {
   const logger = createLogger({ label: "server", level });
@@ -35,7 +34,7 @@ function createHTTPLogger(level?: string) {
   });
 }
 
-async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
+async function app(config: FossilboxServer.UserConfig) {
   const logger = createLogger({ label: "app", level: config.logLevel });
 
   const viteDevServer = process.env.NODE_ENV === "production"
@@ -62,36 +61,16 @@ async function app(config: FossilboxServer.UserConfig, reloaded?: boolean) {
     : await import(dist.server);
 
   app.set("x-powered-by", false);
-  app.set("config", config);
   const db = await database(config);
-  app.set("db", db);
-  routes(app);
   app.use(createHTTPLogger(config.logLevel));
-  app.all("*", createRequestHandler({
-    build,
-    getLoadContext: () => ({ db, config }),
-  }));
+  app.all("*", createRequestHandler({ build, getLoadContext: () => ({ db, config }) }));
 
   const host = config.host!;
   const port = Number.isNaN(Number(config.port)) ? 6330 : Number(config.port);
 
   const server = app.listen(port, host, () => {
-    if (!import.meta.hot?.data?.reloaded && !reloaded) {
-      logger.info(`app listening on \`http://${host}:${port}\`.`);
-    }
+    logger.info(`app listening on \`http://${host}:${port}\`.`);
   });
-
-  if (import.meta.hot) {
-    const dispose = async () => {
-      server.close();
-      await viteDevServer?.close();
-      import.meta.hot!.data.reloaded = true;
-      logger.info("hmr update.");
-    };
-
-    import.meta.hot.on("vite:beforeFullReload", dispose);
-    import.meta.hot.dispose(dispose);
-  }
 
   return { server, viteDevServer, logger };
 }
@@ -108,22 +87,10 @@ function deepFreeze<T extends object>(object: T) {
 }
 
 (async () => {
-  let initialized: Awaited<ReturnType<typeof app>> | void;
-  const config = await watchConfig<FossilboxServer.UserConfig>({
+  const config = await loadConfig<FossilboxServer.UserConfig>({
     name: "fossilbox",
     rcFile: false,
     globalRc: false,
-    acceptHMR({ getDiff }) {
-      return getDiff().length === 0;
-    },
-    async onUpdate({ newConfig }) {
-      if (initialized) {
-        initialized.logger.info("reload for config update.");
-        initialized.server.close();
-        await initialized.viteDevServer?.close();
-        initialized = await app(deepFreeze(cloneDeep(newConfig.config)), true);
-      }
-    },
     defaults: {
       host: "127.0.0.1",
       port: 6330,
@@ -133,5 +100,5 @@ function deepFreeze<T extends object>(object: T) {
       },
     },
   });
-  initialized = await app(deepFreeze(cloneDeep(config.config)));
+  await app(deepFreeze(cloneDeep(config.config)));
 })();

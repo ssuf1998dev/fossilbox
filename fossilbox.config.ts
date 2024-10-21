@@ -1,4 +1,4 @@
-/// <reference path="./src/server/shims.d.ts" />
+/// <reference path="./app/shims.d.ts" />
 
 export default {
   logLevel: "http",

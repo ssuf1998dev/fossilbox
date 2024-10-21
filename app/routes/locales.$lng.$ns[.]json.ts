@@ -1,6 +1,5 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-
-import { resources } from "../locales/server";
+import { resources } from "@server/modules/locales";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { lng, ns } = params;

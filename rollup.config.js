@@ -26,7 +26,7 @@ function getDynamicRequireTargets(pkg) {
 const plugins = [
   nodeResolve({ preferBuiltins: true }),
   json(),
-  typescript({ tsconfig: "tsconfig.server.json" }),
+  typescript(),
   commonjs({
     dynamicRequireTargets: [
       ...getDynamicRequireTargets("libsql"),
@@ -38,7 +38,7 @@ const plugins = [
 
 /** @type {import('rollup').RollupOptions} */
 const server = {
-  input: "src/server/index.ts",
+  input: "app/.server/index.ts",
   output: {
     dir: "dist",
     format: "esm",

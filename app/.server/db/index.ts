@@ -1,4 +1,4 @@
-import { DatabaseNotSupported } from "@server/errors";
+import { DatabaseNotSupported } from "@server/modules/errors";
 import { drizzle as libsqlDrizzle } from "drizzle-orm/libsql";
 import fs from "node:fs";
 import path from "node:path";

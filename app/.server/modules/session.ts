@@ -2,7 +2,6 @@ import { createCookieSessionStorage } from "@remix-run/node";
 import { nanoid } from "nanoid";
 import process from "node:process";
 
-/** @todo migrate to app */
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "_session",

@@ -1,13 +1,12 @@
-import { DatabaseNotSupported } from "@server/errors";
 import crypto from "crypto-js";
 import { eq } from "drizzle-orm";
 import { Authenticator, AuthorizationError } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
 
 import sqliteUsersTable from "../db/schema/sqlite/users";
+import { DatabaseNotSupported } from "./errors";
 import { sessionStorage } from "./session";
 
-/** @todo migrate to app */
 export const authenticator = new Authenticator<typeof sqliteUsersTable.$inferSelect>(
   sessionStorage,
 );

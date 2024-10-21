@@ -10,9 +10,8 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { authenticator } from "@server/modules/auth";
+import serverI18n from "@server/modules/locales";
 import { useChangeLanguage } from "remix-i18next/react";
-
-import serverI18n from "./locales/server";
 
 export default function App() {
   const { locale } = useLoaderData<typeof loader>();

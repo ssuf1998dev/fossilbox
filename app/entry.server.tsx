@@ -2,6 +2,7 @@ import type { EntryContext } from "@remix-run/node";
 
 import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
+import serverI18n, { resources as i18nResources } from "@server/modules/locales";
 import { createInstance } from "i18next";
 import { isbot } from "isbot";
 import { PassThrough } from "node:stream";
@@ -9,7 +10,6 @@ import { renderToPipeableStream } from "react-dom/server";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
 import i18nConfig, { initialized as i18nInitialized } from "./locales/config";
-import serverI18n, { resources as i18nResources } from "./locales/server";
 
 const ABORT_DELAY = 5_000;
 

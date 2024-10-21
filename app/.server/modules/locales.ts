@@ -1,6 +1,5 @@
+import config from "@/locales/config";
 import { RemixI18Next } from "remix-i18next/server";
-
-import config from "./config";
 
 const i18n = new RemixI18Next({
   detection: {
@@ -13,11 +12,11 @@ const i18n = new RemixI18Next({
 export default i18n;
 
 export const resources: Record<string, Record<string, any>> = Object.entries(
-  import.meta.glob("./*/*.json", {
+  import.meta.glob("../../locales/*/*.json", {
     eager: true,
   }),
 ).map<[string, any]>((entry) => {
-  const lng = entry[0].split("/")[1];
+  const lng = entry[0].split("/").at(-2)!;
   const ns = entry[0].split("/").at(-1)?.split(".")[0] ?? "common";
   return [lng, { [ns]: (entry[1] as any).default }];
 }).reduce((map: Record<string, any>, entry) => {

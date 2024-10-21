@@ -6,9 +6,9 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => ({
   plugins: [
-    tsconfigPaths({ projects: ["tsconfig.app.json", "tsconfig.server.json"] }),
+    tsconfigPaths(),
     unocss(),
-    remix({ appDirectory: "src/app", buildDirectory: "dist" }),
+    remix({ buildDirectory: "dist" }),
     replace({
       ...Object.entries({
         "process.env.NODE_ENV": mode,

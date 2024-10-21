@@ -6,7 +6,7 @@ import helper from "./plugins/helper";
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths({ projects: ["tsconfig.app.json", "tsconfig.server.json"] }),
+    tsconfigPaths(),
     helper(),
     replace({
       ...Object.entries({
