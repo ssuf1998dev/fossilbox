@@ -24,7 +24,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Theme>
+        <Theme className="pos-relative">
           <Outlet />
         </Theme>
         <Scripts />

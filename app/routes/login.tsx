@@ -10,11 +10,11 @@ export default function Login() {
   const { t } = useTranslation();
 
   return (
-    <Card>
-      <Form>
+    <Card className="pos-absolute w-64 translate--50% top-1/2 left-1/2">
+      <Form method="POST" className="flex flex-col gap-4">
         <TextField.Root type="email" name="email" required></TextField.Root>
         <TextField.Root type="password" name="password" autoComplete="current-password" required></TextField.Root>
-        <Button>{t("capital_case", { value: t("sign_in") })}</Button>
+        <Button type="submit">{t("capital_case", { value: t("sign_in") })}</Button>
       </Form>
     </Card>
   );
