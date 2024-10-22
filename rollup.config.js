@@ -1,10 +1,10 @@
 import commonjs from "@rollup/plugin-commonjs";
 import json from "@rollup/plugin-json";
 import nodeResolve from "@rollup/plugin-node-resolve";
-import typescript from "@rollup/plugin-typescript";
 import { getPackageInfoSync } from "local-pkg";
 import fs from "node:fs";
 import path from "node:path";
+import swc from "rollup-plugin-swc3";
 
 import helper from "./plugins/helper.js";
 import replace from "./plugins/replace.js";
@@ -26,14 +26,14 @@ function getDynamicRequireTargets(pkg) {
 const plugins = [
   nodeResolve({ preferBuiltins: true }),
   json(),
-  typescript(),
+  shims(),
+  swc({ minify: true }),
   commonjs({
     dynamicRequireTargets: [
       ...getDynamicRequireTargets("libsql"),
     ],
     ignoreDynamicRequires: true,
   }),
-  shims(),
 ];
 
 /** @type {import('rollup').RollupOptions} */
