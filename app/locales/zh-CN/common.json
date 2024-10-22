@@ -1,4 +1,6 @@
 {
   "sign_in": "登录",
-  "capital_case": "{{value, capitalCase}}"
+  "email": "电子邮箱",
+  "password": "密码",
+  "sign_in_callout": "请登录！"
 }

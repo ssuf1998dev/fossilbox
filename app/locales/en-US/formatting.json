@@ -1,0 +1,4 @@
+{
+  "capital_case": "{{value, capitalCase}}",
+  "sentence_case": "{{value, sentenceCase}}"
+}

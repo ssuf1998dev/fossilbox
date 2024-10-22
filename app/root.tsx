@@ -1,4 +1,5 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { PropsWithChildren } from "react";
 
 import { Theme } from "@radix-ui/themes";
 import { json } from "@remix-run/node";
@@ -13,7 +14,7 @@ import { authenticator } from "@server/modules/auth";
 import serverI18n from "@server/modules/locales";
 import { useChangeLanguage } from "remix-i18next/react";
 
-export default function App() {
+export function Layout({ children }: PropsWithChildren) {
   const { locale } = useLoaderData<typeof loader>();
   useChangeLanguage(locale);
 
@@ -24,12 +25,18 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Theme className="pos-relative bg-[var(--accent-2)]">
-          <Outlet />
-        </Theme>
+        {children}
         <Scripts />
       </body>
     </html>
+  );
+}
+
+export default function App() {
+  return (
+    <Theme className="pos-relative bg-[var(--accent-2)]">
+      <Outlet />
+    </Theme>
   );
 }
 

@@ -1,4 +1,6 @@
 {
   "sign_in": "sign in",
-  "capital_case": "{{value, capitalCase}}"
+  "email": "email",
+  "password": "password",
+  "sign_in_callout": "please sign in!"
 }

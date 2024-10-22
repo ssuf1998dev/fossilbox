@@ -11,14 +11,33 @@ export default function Login() {
   const { t } = useTranslation();
 
   return (
-    <Card className="pos-absolute w-64 translate--50% top-1/2 left-1/2 p-6 shadow-[var(--shadow-3)] after-content-none">
-      <Heading size="5" className="mt-0">{__NAME__}</Heading>
+    <Card className="pos-absolute w-96 translate--50% top-3/7 left-1/2 p-8 shadow-[var(--shadow-3)] ">
+      <Heading size="7" className="mt-0 mb-4">{__NAME__}</Heading>
       <Form method="POST" className="flex flex-col gap-4">
-        <TextField.Root type="email" name="email" required></TextField.Root>
-        <TextField.Root type="password" name="password" autoComplete="current-password" required></TextField.Root>
+        <label className="flex flex-col gap-2 text-sm font-bold">
+          {t("formatting.capital_case", { value: t("email") })}
+          <TextField.Root
+            type="email"
+            name="email"
+            required
+            placeholder={t("formatting.sentence_case", { value: t("form.enter", { value: t("email") }) })}
+          >
+          </TextField.Root>
+        </label>
+        <label className="flex flex-col gap-2 text-sm font-bold">
+          {t("formatting.capital_case", { value: t("password") })}
+          <TextField.Root
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            placeholder={t("formatting.sentence_case", { value: t("form.enter", { value: t("password") }) })}
+          >
+          </TextField.Root>
+        </label>
         <Button type="submit" className="w-fit self-end">
-          <IconTablerLogin></IconTablerLogin>
-          {t("capital_case", { value: t("sign_in") })}
+          {t("formatting.capital_case", { value: t("sign_in") })}
+          <IconTablerLogin className="scale-x-[-1]"></IconTablerLogin>
         </Button>
       </Form>
     </Card>

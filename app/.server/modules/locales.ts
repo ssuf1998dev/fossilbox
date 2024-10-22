@@ -12,17 +12,17 @@ const i18n = new RemixI18Next({
 export default i18n;
 
 export const resources: Record<string, Record<string, any>> = Object.entries(
-  import.meta.glob("../../locales/*/*.json", {
-    eager: true,
-  }),
-).map<[string, any]>((entry) => {
-  const lng = entry[0].split("/").at(-2)!;
-  const ns = entry[0].split("/").at(-1)?.split(".")[0] ?? "common";
-  return [lng, { [ns]: (entry[1] as any).default }];
-}).reduce((map: Record<string, any>, entry) => {
-  if (!Object.hasOwn(map, entry[0]))
-    map[entry[0]] = {};
+  import.meta.glob("../../locales/*/*.json", { eager: true }),
+).map<[string, any]>(([file, mod]) => {
+  const lng = file.split("/").at(-2)!;
+  const ns = file.split("/").at(-1)?.split(".")[0] ?? "common";
+  return [lng, { [ns]: (mod as any).default }];
+}).reduce((map: Record<string, any>, [lng, value]) => {
+  if (!map[lng]?.common && value.common) {
+    map[lng] = value;
+    return map;
+  }
 
-  Object.assign(map[entry[0]], entry[1]);
+  Object.assign(map[lng].common, value);
   return map;
 }, {});
