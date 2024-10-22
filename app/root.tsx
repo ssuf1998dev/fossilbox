@@ -24,7 +24,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Theme className="pos-relative">
+        <Theme className="pos-relative bg-[var(--accent-2)]">
           <Outlet />
         </Theme>
         <Scripts />

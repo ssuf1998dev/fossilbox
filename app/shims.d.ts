@@ -1,5 +1,6 @@
 /* eslint-disable vars-on-top, no-var */
 /// <reference types="vite/client" />
+/// <reference types="unplugin-icons/types/react" />
 
 import type { drizzle as libsqlDrizzle } from "drizzle-orm/libsql";
 
